@@ -1,7 +1,8 @@
 <template>
   <div class="LogBody">
     <div class="LoginFrom">
-      <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" style="width: 100%" class="demo-ruleForm">
+      <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" style="width: 100%"
+               class="demo-ruleForm">
         <el-form-item label="姓名" prop="name">
           <el-input type="text" v-model="ruleForm2.name" autocomplete="off"></el-input>
         </el-form-item>
@@ -20,6 +21,9 @@
         <el-form-item label="年龄" prop="age">
           <el-input v-model.number="ruleForm2.age"></el-input>
         </el-form-item>
+        <el-form-item label="出生日期" prop="birth">
+          <el-date-picker v-model="ruleForm2.birth" value-format="yyyy-MM-dd" type="date" placeholder="选择日期" style="width: 300px"></el-date-picker>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
           <el-button @click="resetForm('ruleForm2')">重置</el-button>
@@ -30,7 +34,9 @@
 </template>
 
 <script>
-  import {userLogin,userRegister} from "@/api/user.js"
+  import {setMd5} from "@/lib/util";
+  import {userRegister} from "@/api/user.js"
+
   export default {
     name: "register",
     data() {
@@ -71,41 +77,50 @@
       };
       return {
         ruleForm2: {
-          name:'zsjin',
+          name: 'zsjin',
           pass: '123456',
           checkPass: '123456',
           age: '',
-          sex:null
+          sex: null,
+          birth: ''
         },
         rules2: {
-          name:{required:true,message:"请输入姓名",trigger:"blur"},
+          name: {required: true, message: "请输入姓名", trigger: "blur"},
           pass: [
-            {required:true,validator: validatePass, trigger: 'blur'}
+            {required: true, validator: validatePass, trigger: 'blur'}
           ],
           checkPass: [
-            {required:true,validator: validatePass2, trigger: 'blur'}
+            {required: true, validator: validatePass2, trigger: 'blur'}
           ],
           age: [
-            {required:true,validator: checkAge, trigger: 'blur'}
+            {required: true, validator: checkAge, trigger: 'blur'}
           ],
-          sex:{required:true,message:"请选择性别",trigger:"change"}
+          sex: {required: true, message: "请选择性别", trigger: "change"},
+          birth: {required: true, message: "请选择出生日期", trigger: "change"}
         }
       };
     },
     methods: {
       submitForm(formName) {
+        let self = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            let data={
-              name:this.ruleForm2.name,
-              pwd:this.ruleForm2.pass,
-              oldYear:parseInt(this.ruleForm2.age)
+            let data = {
+              name: this.ruleForm2.name,
+              pwd: setMd5(this.ruleForm2.pass),
+              sex: parseInt(this.ruleForm2.sex),
+              oldYear: parseInt(this.ruleForm2.age),
+              birth: this.ruleForm2.birth,
             }
-            const param=new FormData()
-            param.append("userName",this.ruleForm2.name);
-            param.append("password",this.ruleForm2.pass);
-            userRegister(data).then(res=>{
-              console.log(res);
+            userRegister(data).then(res => {
+              if(res.data.code==this.$global.StatusOk)
+              {
+                this.$router.push("login");
+                self.$Message.info(res.data.Tips+','+res.data.msg)
+              } else {
+                self.$Message.info(res.data.Tips+','+res.data.msg)
+              }
+
             })
           } else {
             console.log('error submit!!');
@@ -121,20 +136,22 @@
 </script>
 
 <style scoped>
-  .LogBody{
+  .LogBody {
     width: 100%;
     height: 938px;
     background: url("../../assets/pig.jpg");
   }
+
   .LoginFrom {
     position: absolute;
     right: 20px;
-    top:120px;
+    top: 120px;
     width: 400px;
     height: 200px;
     opacity: 0.7;
   }
-  .LoginFrom .demo-ruleForm{
+
+  .LoginFrom .demo-ruleForm {
 
   }
 </style>

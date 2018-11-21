@@ -51,10 +51,10 @@
             const param=new FormData()
             param.append("userName",this.ruleForm2.name);
             param.append("password",setMd5(this.ruleForm2.pass));
-            console.log(setMd5(this.ruleForm2.pass));
             userLogin(param).then(res=>{
               if(res.status==this.$global.StatusOk){
                   setSessionStore("token",res.data.token);
+                  this.$router.push({name:"showUser",params:res.data.user})
               }
             })
           } else {

@@ -7,6 +7,7 @@ import ElementUI from 'element-ui';
 import globalData from './global.js';
 import 'element-ui/lib/theme-chalk/index.css';
 import iView from 'iview'
+import 'iview/dist/styles/iview.css';
 
 Vue.config.productionTip = false
 Vue.prototype.$global=globalData

@@ -2,6 +2,9 @@ import Axios from 'axios'
 const baseURL="http://127.0.0.1:8081"
 import {getSessionStore} from "@/lib/util.js"
 import { Message } from 'iview'
+let AUTH_TOKEN=(function(){
+  return sessionStorage.getItem("token");
+})();
 class httpRequest {
   constructor () {
     this.options = {
@@ -31,6 +34,8 @@ class httpRequest {
     //   // 对请求错误做些什么
     //   return Promise.reject(error)
     // })
+    //添加请求拦截器
+
 
   }
   // 创建实例
